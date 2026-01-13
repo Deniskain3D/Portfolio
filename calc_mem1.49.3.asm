@@ -1,8 +1,3 @@
-format PE GUI 4.0
-entry start
-include 'win32ax.inc'
-
-section '.data' data readable
 control equ word [ebp-2]         
 ten          equ word [ebp-4]    
 temp         equ [ebp-4]         
@@ -1209,46 +1204,5 @@ section '.bss' data readable writeable
   cw dd (0),0
  cws dd (0),0
  decstr db 63 dup (0),0          
- sizeof.decstr = $ - decstr      
+ sizeof.decstr = $ - decstr
 
-section '.idata' import data readable writeable
-
-  library kernel,'KERNEL32.DLL',\
-          user,'USER32.DLL'
-          
-
-  import kernel,\
-         GetModuleHandle,'GetModuleHandleA',\
-         ExitProcess,'ExitProcess'
-
-  import user,\
-         DialogBoxParam,'DialogBoxParamA',\
-         IsDlgButtonChecked,'IsDlgButtonChecked',\
-         SetDlgItemText,'SetDlgItemTextA',\
-         EndDialog,'EndDialog',\
-         GetDlgItemText,'GetDlgItemTextA'
-section '.rsrc' resource data readable
-directory RT_DIALOG,dialogs
- resource dialogs,\
- 100,LANG_ENGLISH+SUBLANG_DEFAULT,canculator
- dialog canculator,'Okkolo Pro v.1.49.3 Beta Unregistered',70,70,190,175,WS_MINIMIZEBOX+WS_POPUP+WS_CAPTION+WS_SYSMENU+DS_MODALFRAME+DS_3DLOOK
-
-dialogitem 'BUTTON','BC',ID_D, 160, 120, 16, 14, WS_VISIBLE+WS_TABSTOP+BS_PUSHBUTTON
-dialogitem 'BUTTON','AC',ID_C, 135, 120, 15, 14, WS_VISIBLE+WS_TABSTOP+BS_PUSHBUTTON
-dialogitem 'BUTTON','mB',ID_B, 110, 120, 15, 14, WS_VISIBLE+WS_TABSTOP+BS_PUSHBUTTON
-dialogitem 'BUTTON','mA',ID_A, 85, 120, 15, 15, WS_VISIBLE+WS_TABSTOP+BS_PUSHBUTTON
-dialogitem 'STATIC','&Entry A:',65535, 10, 5, 30, 8, WS_VISIBLE,WS_EX_LEFT
-dialogitem 'EDIT','',ID_TYPEA,  5, 15, 176, 13, WS_VISIBLE+WS_BORDER+WS_TABSTOP
-dialogitem 'STATIC','&Entry B:',65535, 10, 30, 30, 8,WS_VISIBLE,WS_EX_LEFT
-dialogitem 'EDIT','',ID_TYPEB,  5, 40, 176, 13, WS_VISIBLE+WS_BORDER+WS_TABSTOP 
-dialogitem 'EDIT','',ID_RESULT, 85, 100, 90, 13, WS_VISIBLE+WS_BORDER+WS_TABSTOP+ES_AUTOHSCROLL
-dialogitem 'BUTTON','&Operation',-1, 5, 70, 60, 70,WS_VISIBLE+BS_GROUPBOX
-dialogitem 'BUTTON','&Add',ID_ADD, 20, 82, 25, 13,WS_VISIBLE+BS_AUTORADIOBUTTON+WS_TABSTOP+WS_GROUP
-dialogitem 'BUTTON','S&ub',ID_SUB, 20, 95, 25, 13,WS_VISIBLE+BS_AUTORADIOBUTTON
-dialogitem 'BUTTON','&Mul',ID_MUL, 20, 108, 30, 13,WS_VISIBLE+BS_AUTORADIOBUTTON
-dialogitem 'BUTTON','&Div',ID_DIV, 20, 121, 30, 13, WS_VISIBLE+BS_AUTORADIOBUTTON
-dialogitem 'BUTTON','&Result',-1, 75, 90, 110, 50,WS_VISIBLE+BS_GROUPBOX
-dialogitem 'BUTTON','&Div-Module',ID_TOPMOST, 135, 75, 50, 13, WS_VISIBLE+WS_TABSTOP+BS_AUTOCHECKBOX
-dialogitem 'BUTTON','Calculate',IDOK, 30, 150, 45, 15,WS_VISIBLE+WS_TABSTOP+BS_DEFPUSHBUTTON
-dialogitem 'BUTTON','E&xit',IDCANCEL, 110, 150, 45, 15,WS_VISIBLE+WS_TABSTOP+BS_PUSHBUTTON
-enddialog
