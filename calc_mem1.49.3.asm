@@ -82,12 +82,7 @@ cmp  [wparam],BN_CLICKED shl 16 + ID_A
         invoke  IsDlgButtonChecked,[hwnddlg],ID_DIV
         cmp     eax,BST_CHECKED
         je      .div_process
-
-
         jmp     .topmost_ok
-
-
-
 .add_process:
    push eax ebx ecx edx edi esi
 mov dword [operat], 00000000h
@@ -131,8 +126,6 @@ mov [minus],01h
     pop esi edi edx ecx ebx eax    
     jmp .topmost_ok
 
-
-
 .sub_process:
    push eax ebx ecx edx edi esi
 mov dword [operat], 00000000h
@@ -143,7 +136,6 @@ mov byte[minusb],0
 mov [minus],0
 jmp .checkin
 .wozratsub:
-
 
          cmp [minusa],01h
          jne @f
@@ -156,7 +148,6 @@ jmp .checkin
                 call negcheck
                 sub eax, ebx                         
       .prodoljs:                             
-
          bt eax, 31                
          jnc @f
          mov [minus],01h           
@@ -169,8 +160,6 @@ jmp .checkin
          call HexcProc             
     pop esi edi edx ecx ebx eax    
     jmp .topmost_ok
-
-
 
 .mul_process:
    push eax ebx ecx edx edi esi
@@ -189,24 +178,13 @@ jmp .checkin
         je @f             
         mov [minus],01h   
       @@:                 
-         
          mul ebx          
-
-
-
-
-
-
-
          call WriteNum             
-         
          mov [sizes], cl           
          call ClearR               
          call HexcProc             
     pop esi edi edx ecx ebx eax    
     jmp .topmost_ok
-
-
 
 .div_process:
    push eax ebx ecx edx edi esi
@@ -223,11 +201,6 @@ jmp .checkin
       div ebx                      
       push ebx                    
       push edx
-
-
-
-
-
         mov   ebx, 10             
         mov   edi, integrer       
 .bycle:
@@ -242,23 +215,14 @@ jmp .checkin
         pop   eax                 
         add   al, 0x30            
     stosb                         
-
         cmp   ecx, 1              
-
-
 loop .ite                         
-
-
       pop edx              
       pop ebx              
-
       call .create_float           
 .finita:
-
    pop esi edi edx ecx ebx eax
    jmp .topmost_ok
-
-
 .copyA:
 .if dword [result]<>0
 invoke  GetDlgItemText,[hwnddlg],ID_RESULT,memA,10     
@@ -266,16 +230,12 @@ invoke  SetDlgItemText,[hwnddlg],ID_A,fula
 call ClearR
 jmp     DialogProc.topmost_ok                          
 .endif
-
 .if dword [memA]<>0
 invoke  SetDlgItemText,[hwnddlg],dword [ids],memA      
 jmp     DialogProc.topmost_ok
 .endif
-
 invoke  GetDlgItemText,[hwnddlg],ID_RESULT,memA,10     
-
 jmp     DialogProc.topmost_ok
-
 .copyB:
 .if dword [result]<>0
 invoke  GetDlgItemText,[hwnddlg],ID_RESULT,memB,10     
@@ -283,17 +243,12 @@ invoke  SetDlgItemText,[hwnddlg],ID_B,fulb
 call ClearR
 jmp     DialogProc.topmost_ok                          
 .endif
-
 .if dword [memB]<>0
 invoke  SetDlgItemText,[hwnddlg],[ids],memB            
 jmp     DialogProc.topmost_ok
 .endif
-
 invoke  GetDlgItemText,[hwnddlg],ID_RESULT,memB,10     
-
 jmp     DialogProc.topmost_ok
-
-
 .copyC:
 mov ecx, 31
 .clA:
@@ -301,7 +256,6 @@ mov [memA+ecx-1],00000000h
 loop .clA
 invoke  SetDlgItemText,[hwnddlg],ID_A,empa
 jmp     DialogProc.processed                             
-
 .copyD:
 mov ecx, 31
 .clB:
@@ -310,17 +264,11 @@ loop .clB
 invoke  SetDlgItemText,[hwnddlg],ID_B,empb
 jmp     DialogProc.processed                             
 
-
-
-
 .checkin:
-
    xor eax, eax
    xor ebx, ebx
    xor ecx, ecx
    xor edx, edx
-
-
 call ClearRF
 mov dword [Afloat], 00000000h 
 mov dword [Bfloat], 00000000h 
@@ -331,8 +279,6 @@ mov byte[flajok], 00h
 
 stdcall CheckFloat, dword typea
 mov [multa], ecx
-
-
  stdcall ConvAB, dword typea, dword minusa
  mov dword [typea], edx        
  mov edx, 0
@@ -340,12 +286,9 @@ stdcall CreateFloat, dword typea, dword multa, dword Afloat, dword minusa
 mov eax, 0                     
 mov al, [flajok]               
 push eax                       
-
-
 mov [flajok],0
 stdcall CheckFloat, dword typeb
 mov [multb], ecx
-
 pop eax                        
 add [flajok], al
 cmp byte[flajok],0             
@@ -354,15 +297,11 @@ je .gens
    xor ebx, ebx
    xor ecx, ecx
    xor edx, edx
-
-
-
 .if [wozflag] = 03h                
        mov ecx, sizeof.typeb       
        mov esi, typeb              
        mov eax, [esi]              
 .nulfloa:                          
-       
        cmp al,2Dh                  
        jne @f
        inc esi
@@ -384,7 +323,6 @@ je .gens
 mov ecx,0                          
 mov eax,0                          
 
-
 call ClearRF
  stdcall ConvAB, dword typeb, dword minusb       
  mov dword [typeb], edx            
@@ -394,31 +332,14 @@ call ClearRTM
 call ClearR
 call ClearD
 call ClearF      
-
 mov edx,0
-
-
-
 
 stdcall CreateFloat, dword typea, dword multa, dword Afloat, dword minusa
 stdcall CreateFloat, dword typeb, dword multb, dword Bfloat, dword minusb
 mov eax, [operat] 
 
-
 call flload   
-
 stdcall dispf, dword [operat]     
-
-
-
-
-
-
-
-
-
-
-
 mov esi, decstr
 mov edi, result                   
 
@@ -430,14 +351,6 @@ mov ecx, 22
 rep movsb
 pop esi edi edx ecx ebx eax       
 jmp DialogProc.topmost_ok
-
-
-
-                        
-
-                            
-
-
 
 .gens:
 call ClearRTM
@@ -455,8 +368,6 @@ call ClearF
         xor edx, edx
         pop eax
 
-
-
 cmp byte [wozflag],00h
 je .wozratadd
 cmp byte [wozflag],01h
@@ -471,16 +382,7 @@ je .wozratmul
 @@:
 cmp byte [wozflag],03h
 je .wozratdiv
-
-       
-
-
-
-
-
-
 .create_float:
-
         call ClearF
         mov ecx, 0
      .fl:
@@ -490,13 +392,10 @@ je .wozratdiv
         xor edx, edx              
         div ebx                   
  pushad
- 
-
         mov   ebx, 10             
         lea   edi, [float+ecx]    
         xor   ecx, ecx
 .cycle:
-
         inc   ecx                 
         xor   edx, edx            
         div   ebx                 
@@ -513,7 +412,6 @@ je .wozratdiv
       cmp   ecx, 0                
       jnz   .iter
      @@:
-
  popad
         xor eax,eax               
         inc ecx                   
@@ -521,24 +419,13 @@ je .wozratdiv
         je .fle
         jmp .fl
       .fle:
-
-        
         mov eax, dword[integrer]
-        
-
         call WriteNum             
-
         mov [sizes], cl           
 
         call ClearRTM
         call ClearR               
-
         call HexcProc 
-
-        
-        
-        
-        
 
         mov esi, float
        @@:                        
@@ -571,49 +458,29 @@ DialogProc.mod_process:
         add dl, 30h
         call ClearR
         mov [result], edx
-
-
         pop esi edi edx ecx ebx eax   
-
  jmp DialogProc.topmost_ok
-
-
-
-
-
-
-
-
 
   DialogProc.topmost_ok:                                     
         invoke SetDlgItemText, [hwnddlg], ID_RESULT, result  
         
         jmp     DialogProc.processed
-
   DialogProc.wmclose:
         invoke  EndDialog,[hwnddlg],0
-
   DialogProc.processed:
         mov     eax,1
-
   DialogProc.finish:
         pop     edi esi ebx
         ret
 endp
-
-
-
 HexcProc:     
-
    xor eax, eax
    xor ebx, ebx
    xor ecx, ecx
    xor edx, edx
-
 call ClearD
 call ClearRTM
 call ClearR
-
 
 or dword[number],00000000h 
 je .nulll
@@ -706,11 +573,7 @@ mov ecx,0
 lodsb
 stosb
 loop .form         
-
-
-
 ret
-
 .nulll:
 
 mov byte[result], 30h
@@ -742,8 +605,6 @@ xor eax, eax
         inc ecx
         jmp .chk
       .nxt:
-
-
         mov [multipl], 10
         lea esi, [tmp+ecx]
         xor eax, eax
@@ -751,7 +612,6 @@ xor eax, eax
         inc ah
         mov ecx, 1
         std
-
     .llop:
         or ah, 0
         je .cor
@@ -768,15 +628,8 @@ xor eax, eax
         cld
         mov eax,0
         mov ecx,0
-        
-     ret
+      ret
      endp
-
-
-
-
-
-
 
 proc CheckFloat typeab
    mov esi, [typeab]      
@@ -788,17 +641,13 @@ proc CheckFloat typeab
    .if al <> '.'          
         stosb
         .endif
-
-
    .if al='.'
-
                 mov [flajok],1               
                 mov dword [tmp], ecx         
                 sub cl, 1                    
 
         .endif
     inc ecx            
-
     or eax, 0
     jne .check
     sub cl, 1  
@@ -812,7 +661,6 @@ proc CheckFloat typeab
         .endif
     ret
 endp
-
 
 fpuinit:
 FINIT
@@ -880,7 +728,6 @@ FST dword [eax]
 fldcw word [cws]         
 mov eax, 0
 ret
-
 negcheck:
                 mov esi, minusa
                 mov edi, minusb
@@ -892,9 +739,7 @@ negcheck:
                 mov [minus],0
        @@:
 ret
-
 WriteNum:   
-
         mov ecx, 0                 
         mov edi, number            
        @@:
@@ -905,7 +750,6 @@ WriteNum:
         inc ecx                    
         jmp @b
        @@:
-
         xchg edx,eax
        @@:
         or eax,eax                 
@@ -916,27 +760,20 @@ WriteNum:
         jmp @b
        @@:
 ret
-
-
 proc dispf resf                 
    xor eax, eax
    xor ebx, ebx
    xor ecx, ecx
    xor edx, edx
 finit
-
     fstcw control
     mov ax, control
-
     mov ah, 00001100b           
     mov temp, ax
     fldcw temp                  
-
 mov eax,0
 mov eax, [resf]
-
     fld dword [eax]             
-
     fxam                        
     fstsw ax                    
     sahf
@@ -944,12 +781,10 @@ mov eax, [resf]
     fchs                        
     mov [minus], 1              
   @@:
-
     mov edi, decstr
     call .dbltodec
         ret
 endp
-
 
 .dbltodec:                      
    xor eax, eax
@@ -961,33 +796,20 @@ pop  ebx ebx ebx
     push ebp
     mov ebp, esp
     sub esp, 12
-
-
-
-    
-    
     fst integer
-
     frndint                     
-
     fld integer
-
     mov dword [ebp-12], 00000000h     
     mov dword [ebp-8],  00000000h
     fxch
     fsub st1, st0               
     call .bcdtodec
     fabs                        
-
     mov byte [edi], '.'         
     add edi, 1
-
-    
     mov ten, 10
     fild ten
     fxch
-
-    
 .get_fractional:
     fmul st0, st1               
     fist word temp              
@@ -1001,25 +823,18 @@ pop  ebx ebx ebx
     sahf                        
     jnz .get_fractional         
     mov byte [edi], 0           
-
-    
     ffree st                    
     ffree st1                   
-    
-
     leave
     ret                         
-
 .bcdtodec:                      
    xor eax, eax
    xor ebx, ebx
    xor ecx, ecx
    xor edx, edx
-
     push ebp
     mov ebp, esp
     sub esp, 10                 
-
       pop eax eax
       xor eax, eax
       push eax eax
@@ -1027,13 +842,10 @@ pop  ebx ebx ebx
     mov ecx, 10                 
     lea esi, [ebp - 1]          
     xor bl, bl                  
-
-    
-    btr word [ebp-2], 15        
+     btr word [ebp-2], 15        
     jnc .loo                    
     mov byte [edi], '-'         
     add edi, 1
-
     .loo:
         mov al, byte [esi]
         mov ah, al
@@ -1063,10 +875,7 @@ pop  ebx ebx ebx
     mov byte [edi], 0           
     leave
     ret                         
-
-
 ClearR:                            
-
         push edi
         xor eax, eax
         mov edi, result
@@ -1076,7 +885,6 @@ ClearR:
 ret
 
 ClearN:                            
-
         push edi
         xor eax, eax
         mov edi, number
@@ -1086,7 +894,6 @@ ClearN:
 ret
 
 ClearF:                            
-
         push edi
         xor eax, eax
         mov edi, float
@@ -1096,7 +903,6 @@ ClearF:
 ret
 
 ClearD:                            
-
         push edi
         xor eax, eax
         mov edi, decstr
@@ -1116,7 +922,6 @@ ClearRF:
 ret
 
 ClearRTM:                           
-
         push edi
         xor eax, eax
         mov edi, tmpsult
@@ -1126,7 +931,6 @@ ClearRTM:
 ret
 
 ClearINT:                           
-
         push edi
         xor eax, eax
         mov edi, integrer
@@ -1134,9 +938,7 @@ ClearINT:
         rep stosb                  
         pop edi
 ret
-
 section '.bss' data readable writeable
-
 
   typea db 31 dup (0),0          
  sizeof.typea = $ - typea
