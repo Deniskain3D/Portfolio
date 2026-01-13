@@ -1,7 +1,3 @@
-format pe gui
-entry start
-include 'win32ax.inc'
-
 start:
 	mov ecx, 0x2
 	mov eax, 'kot'
@@ -46,15 +42,10 @@ start:
 jnz .ring
 	ret
 
-data import
-library user32,'USER32.DLL';, msvcrt,'MSVCRT.DLL'
-;import msvcrt,sprintf,'sprintf'
-include 'api/user32.inc'
-end data
-
 section '.bss' data readable writable
 title db 'XOR Test',0
 fmt db '%s',0
 outa dd 'eax:',0,0
 outb dd 'ebx:',0,0
 buffer rb 32
+
