@@ -1,20 +1,4 @@
-control equ word [ebp-2]         
-ten          equ word [ebp-4]    
-temp         equ [ebp-4]         
-integer      equ qword [ebp-12]  
-ID_TYPEA     = 101   
-ID_TYPEB     = 102   
-ID_RESULT    = 103   
-ID_ADD       = 201   
-ID_SUB       = 202   
-ID_MUL       = 203   
-ID_DIV       = 204   
-ID_TOPMOST   = 301   
-ID_A =401             
-ID_B =402             
-ID_C =403             
-ID_D =404             
-fixnop db 1,0         
+       
 section '.text' code readable executable
 
   start:
@@ -938,73 +922,7 @@ ClearINT:
         rep stosb                  
         pop edi
 ret
-section '.bss' data readable writeable
-
-  typea db 31 dup (0),0          
- sizeof.typea = $ - typea
-  typeb db 31 dup (0),0          
- sizeof.typeb = $ - typeb
- floatb_int db 31 dup (0),0
- number db 31 dup (0),0          
- sizeof.number = $ - number      
- result dd 31 dup (0),0          
- sizeof.result = $ - result      
- tmpsult dd 31 dup (0),0
- sizeof.tmpsult = $ - tmpsult
- tmp db 31 dup (0),0
- tmpd db (0),0
- float db 31 dup (0),0
- sizeof.float = $ - float
- integrer db 31 dup (0),0
- sizeof.integrer = $ - integrer
- saveres db (0),0                
- multipl dd (0),0
- sizes db (0),0
- style dd (0),0
- stackp dd (0),0
- point db '.',0
- flajok db (0),0
- multa dd (0),0                  
- multb dd (0),0                  
- minus db (0),0                  
-  wozflag dd (0),0
-   operat dd (0),0               
- ids dd (0),0
- fula db 'AF',0
- fulb db 'BF',0
- NaN db 'NaN',0
- empa db 'mA',0
- empb db 'mB',0
- minusa dd (0),0
- minusb dd (0),0                                 
-
- memA db 31 dup (0),0            
- memB db 31 dup (0),0            
- memC db 31 dup (0),0            
- memD db 31 dup (0),0            
-
-
- Afloat dd (0),0
- sizeof.Afloat = $ - Afloat
- Bfloat dd (0),0
- sizeof.Bfloat = $ - Bfloat
- resultf db 10 dup (0),0
- sizeof.resultf = $ - resultf
-
- resaddf db 10 dup (0),0
- sizeof.resaddf = $ - resaddf
- ressubf db 10 dup (0),0
- sizeof.ressubf = $ - ressubf
- resmulf db 10 dup (0),0
- sizeof.resmulf = $ - resmulf
- resdivf db 10 dup (0),0
- sizeof.resdivf = $ - resdivf
+section '.data' data readable writeable
  copyr  db 'Copyright 2025 by Denis AKA Quriositer [c]',0
- cont   db 'For comercial use contact me at Telegram @Quriositer to by this product legally',0
-
- delitel dd 10,0
-  cw dd (0),0
- cws dd (0),0
- decstr db 63 dup (0),0          
- sizeof.decstr = $ - decstr
+ cont   db 'For comercial use contact me at Telegram @Quriositer to buy this product legally',0
 
