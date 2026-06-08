@@ -1,4 +1,4 @@
-;Universal Decoder IEEE754 для <TYPE> Float (single precission) UINT32 (without sign format)
+;Universal Decoder IEEE754 for <TYPE> Float (single precission) UINT32 (without sign format)
 ;Beta 0.16 DEMO
 real4 dd 0.965436
 initst dd (1),0
