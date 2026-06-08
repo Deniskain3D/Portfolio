@@ -1,11 +1,11 @@
 
-;Universal Decoder IEEE754 для <TYPE> Float (одинарная точность) UINT32 (беззнаковый формат)
+;Universal Decoder IEEE754 для <TYPE> Float (single precission) UINT32 (without sign format)
 ;Beta 0.15 DEMO
 
 real4 dd 1.1
 ;===========================================================================================
-;	       0	      0011 1111      (1)     001 0101 1100 0010 1000 1111	    1-й разряд между мантисой и порядком всегда скрыт и равен единице
-;	       ^sign bit  Exponent^8bit   virt^ bit	  ^^^23 mantiss bit
+;	       0	      0011 1111      (1)     001 0101 1100 0010 1000 1111	  1-st symbol between mantissa and exponent is hide and permanent equal 1 
+;	       ^sign bit  Exponent^8bit   virt^ bit	  ^^^23 mantiss bit             
 initst dd (1),0
 ;formatStr db	'%d',0
 ;formatP db    '.%d',13,10,0
@@ -18,42 +18,42 @@ xor edx, edx
 
 mov eax, [real4]
 
-bt eax, 31	;анализируем наличие знака минус в закодированом числе
+bt eax, 31	
 jnc @f
 mov [minus],1
 @@:
 
 mov [pointer], 1
-;1. Вычислим степень двойки скрытого разряда (который равен единице в нормализованом варианте)
+
 
 shr eax, 23
-mov [probe], al      ;Экспонента до вычета для анализа минусовой области BIAS экспоненты
+mov [probe], al 
 sub eax, 7fh
 jnc @f
 neg eax
 @@:
-mov [expo], eax      ;Экспонента после вычета константы
+mov [expo], eax 
 
 mov [step],23
-sub [step], eax      ;вычисляем степень двойки для деления мантиссы	 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,
-cmp byte[step],98h   ;это бы надо будет убрать и переписать системно в минусовой части
+sub [step], eax 
+cmp byte[step],98h
 jne @f
 jmp .printer
 ;mov [step],23
-;mov [expo],0	      ;и это бы надо будет убрать и переписать системно в минусовой части
+;mov [expo],0	  
 @@:
 
 
 
 ;===========================================================================================
-mov edx, [real4]       ;загрузим float для создания битовой карты ниже
+mov edx, [real4]  
 mov ecx, 23
 
 .mantis:
 dec ecx
 bt dx, 00
 jnc @f
-bts ebx, 0	     ;если бит в al есть копируем его в ebx
+bts ebx, 0	     
 @@:
 shr edx,1
 rol ebx,1
@@ -62,11 +62,8 @@ jne .mantis
 shr ebx,1
 
 
-;--------------------------------------------------------- ^^^ МАСКА КОРРЕКТНАЯ ^^^  ------
-;Теперь имеем в ecx степень двойки (bias)
-;	имеем в ebx перевернутую мантиссу 23 бит
 mov [revbx], ebx
-;---------------------------------- Подсчет нулевых разрядов ------------------------------
+
 mov ecx, [expo]
 .if ecx > 0
 .trimbx:
@@ -74,14 +71,14 @@ shr ebx,1
 loop .trimbx
 .endif
 
-.if [probe] <> 7eh		       ; \
-xor eax, eax			       ; Раздел Неправильный  !!!!!!!!
-mov ecx, [step] 		       ; /
+.if [probe] <> 7eh		       
+xor eax, eax			       
+mov ecx, [step] 		       
 .zerocount:
 bt ebx,0
 jc .tod
 inc [tmp]
-shr ebx, 1			       ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+shr ebx, 1
 loop .zerocount
 .tod:
 
@@ -94,14 +91,12 @@ div  ebx
 mov [getzero], al
 .endif
 .endif
-;===========================================================================================	ДОСЮДА ВСЕ ПРАВИЛЬНО УЖЕ НЕ ТРОГАТЬ
+;===========================================================================================
 
-;Проход  для спрятаного первого разряда:
-		       ;(чистим edx перед умножением и делением!)
-mov edx, 24	       ;23 счетчик разрядов + 1 с учетом скрытого разряда
+mov edx, 24
 mov ebx, [revbx]
-mov ecx, [expo]      ;BIAS exponent multipler
-.cosolide:	       ; ЦИКЛ СДВИГА НА РАЗРЯД
+mov ecx, [expo]
+.cosolide:	   
 mov [countst], ecx
 .if cl = 81h
 mov [countst],0
@@ -109,12 +104,12 @@ mov [countst],0
 
 .if edx = 24
 .if cl <> 81h
-mov [razriad+24*4],1   ; Инициализируем скрытый разряд Единицей
+mov [razriad+24*4],1
 .endif
 .endif
 
 .if ecx = 0
-dec [pointer]	       ; Флаг перехода на основную мантиссу со скрытого разряда
+dec [pointer]	    
 .endif
 
 .if edx <> 24
@@ -122,10 +117,10 @@ bt bx, 00
 jnc @f
 mov [razriad+edx*4],1
 @@:
-shr ebx, 1	       ; Спозиционируем битовую маску для передачи текущего бита в мультиплаер
+shr ebx, 1	       
 .endif
 
-.solide:		 ; ЦИКЛ ИТЕРАЦИЙ В РАЗРЯДЕ ПО СЧЕТЧИКУ [countst]
+.solide:		
 mov eax, 2
 .if ecx = 0
 dec eax
@@ -142,7 +137,7 @@ xchg edx, ebx
 xor edx, edx
 
 .if [probe] >= 7fh
-mul [razriad+ebx*4]	 ; Умножаем бит на значение BIAS из указателя  << тут оно в EBX!
+mul [razriad+ebx*4]	
 .endif
 
 ;int 3
@@ -159,18 +154,17 @@ mov edx, [savdx]
 mov [razriad+edx*4],eax
 
 .if [countst] > 0
-dec [countst]		      ;убавляем счетчик умножения eax
+dec [countst]		
 .endif
 
 cmp [countst],0
 jne .solide
 
-.if edx <> 24		       ; ^^Связано со значением EDX перед .cosolide!!!
-   add [razriad+24*4],eax     ;добавляем к основной константе! (а не к текущему значению EDX)
+.if edx <> 24		
+   add [razriad+24*4],eax 
 .endif
 
 dec edx
-;----------------------- Прыжок на алгоритм работы с целой частью, пока степень больше единицы
 
 .if cl > 0
 dec ecx
@@ -183,14 +177,14 @@ jmp .cosolide
   .endif
 .endif
 ;------------------------
-cmp [revbx],0		     ;Проверка на ноль в мантиссе и вообще в целом
+cmp [revbx],0	
 je .printer
 
 .render:
 
-mov ecx, [step] 	 ;23 - минус экспонента: кол-во оставшихся итераций для float
-mov ebx, [real4];[revbx];отреверсеный ebx без мантиссы
-mov eax, [expo] 	 ;экспонента
+mov ecx, [step] 
+mov ebx, [real4]
+mov eax, [expo] 
 
 ;.if eax <> 0
 ;.trim:
@@ -207,22 +201,21 @@ mov [initst],2
 bt  ebx, 0
 shr ebx,1
 jnc .nakopla
-add [akb], eax	  ;накопляем результат мантиссы для деления на [step] (степень двойки мантиссы за вычетом экспоненты)
+add [akb], eax	
 .nakopla:
 loop .msumm
 
 
-;-----------------------------------Подпрограмма вычисления float части ---------------------
 mov ecx, [step]
 mov eax, 1
 xor edx, edx
 mov [initst],2
 
 .exponent:
-mul [initst]			;two constant
+mul [initst]	
 loop .exponent
 
-mov ecx, 7			;точность не более 8! (для 23 бит)
+mov ecx, 7			;precission not over 8 sym after point! (for 23 bit mantiss)
 mov [step], eax
 mov [razriad+23*4],00000000h		;init for float
 
@@ -231,10 +224,10 @@ mov eax, 10
 mul [akb]
 xor edx, edx
 
-.repeate:			;Глотает первые нули во флоат части !
+.repeate:	
 
 .if eax <> 0
-div [step]			;вычисляем float часть
+div [step]	
 add [razriad+23*4],eax
 .endif
 
@@ -266,7 +259,7 @@ xor eax, eax
 lahf
 pusha
 	;mov eax, [razriad+24*4]
-	lea eax, [razriad+24*4] 	     ; ^^Связано со значением EDX перед .cosolide!!!
+	lea eax, [razriad+24*4] 	
 	mov [stp], esp
 	mov ebp, esp
 	push eax
@@ -291,7 +284,7 @@ loop .zeros
 .endif
 popa
 pusha
-	lea eax, [razriad+23*4] 	     ; ^^Связано со значением EDX перед .cosolide - 1 !!!
+	lea eax, [razriad+23*4]
 	mov [stp], esp
 	mov ebp, esp
 	;push eax
@@ -315,7 +308,7 @@ probe db (0),0
 minus db (0),0
 getzero db (0),0
 tmp db (0),0
-pointer  dd (00000000h),0		    ;Указатель на разряд
+pointer  dd (00000000h),0
 countst  dd (00000000h),0
 expo	 dd (00000000h),0
 step dd  (00000000h),0
